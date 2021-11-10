@@ -2,7 +2,7 @@
 
 # https://www.youtube.com/watch?v=XVv6mJpFOb0
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup as BS
 import requests
 
 
@@ -12,7 +12,7 @@ def main():
         "https://storavarvsgatan6.se/meny.html",
     ]
 
-    # spill_soup = BeautifulSoup(requests.get(urls[0]).content, "html.parser")
+    # spill_soup = BS(requests.get(urls[0]).content, "html.parser")
     # spill_main = spill_soup.find_all("p", text=True)
     # spill_veg = spill_soup.find("span", text=True)
 
@@ -21,11 +21,17 @@ def main():
 
     # print(spill)
 
-    mec_soup = BeautifulSoup(requests.get(urls[1]).content, "lxml")
-    # # mec_soup = BeautifulSoup(requests.get(urls[1]).content, "html.parser")
+    mec_soup = BS(requests.get(urls[1]).content, "lxml")
+    # # mec_soup = BS(requests.get(urls[1]).content, "html.parser")
     # mec_main = mec_soup.find_all("span", text=True)
+
+    # Cleanup those wonderfully broken html linebreaks.
+    for linebreak in mec_soup.find_all("br"):
+        linebreak.extract()
     mec = [
-        t.text.strip() for t in mec_soup.find_all("span", text=True) if t.text.strip()
+        t.text.strip()
+        for t in mec_soup.find_all("span", text=True)[11:43]
+        if t.text.strip()
     ]
     # # mec = [t.text for t in mec_main if "\xa0" not in t]
     print(mec)
