@@ -25,15 +25,16 @@ def main():
     mec_soup = BS(requests.get(urls[1]).text, "lxml")
     # mec_main = mec_soup.find_all("span", text=True)
 
-    # Cleanup wonderfully broken html (linebreaks and characters).
-    for linebreak in mec_soup.find_all("br"):
-        linebreak.extract()
+    # # Cleanup wonderfully broken html (linebreaks and characters).
+    # for linebreak in mec_soup.find_all("br"):
+    #     linebreak.extract()
 
-    mec_menu = [
-        t.text.strip()
-        for t in mec_soup.find_all("span", text=True)[11:43]
-        if t.text.strip()
-    ]
+    # # Gather the mec-menu
+    # mec_menu = [
+    #     t.text.strip()
+    #     for t in mec_soup.find_all("span", text=True)[11:43]
+    #     if t.text.strip()
+    # ]
     # # mec = [t.text for t in mec_main if "\xa0" not in t]
     print(mec_menu)
 
