@@ -21,11 +21,11 @@ def main():
         "https://storavarvsgatan6.se/meny.html",
     ]
 
-    print(spill(get_parser(urls[0])))
-    print(stora_varvsg(get_parser(urls[1])))
+    print(spill(get_html(urls[0])))
+    print(stora_varvsg(get_html(urls[1])))
 
 
-def get_parser(url: str) -> BS:
+def get_html(url: str) -> BS:
     """
     Request page and return a BeautifulSoup object
 
@@ -47,7 +47,7 @@ def spill(soup: BS):
     spill_meat = soup.find_all("p", text=True)
     spill_veg = soup.find("span", text=True)
 
-    spill = [text.text for text in spill_meat[:3]]
+    spill = [text.get_text(strip=True) for text in spill_meat[:3]]
     spill.insert(2, spill_veg.text)
     return spill
 
@@ -62,12 +62,11 @@ def stora_varvsg(soup: BS):
         linebreak.extract()
 
     # Gather the mec-menu
-    mec = [
-        t.text.strip()
+    return [
+        t.get_text(strip=True)
         for t in soup.find_all("span", text=True)[11:43]
-        if t.text.strip()
+        if t.get_text(strip=True)
     ]
-    return mec
 
     # mec = [t.text for t in mec_main if "\xa0" not in t]
     # # text = [x.get_text() for x in tag]
