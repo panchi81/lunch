@@ -4,6 +4,15 @@
 
 from bs4 import BeautifulSoup as BS
 import requests
+from datetime import datetime, date
+
+
+def week_no():
+    year, week, day = date.isocalendar(datetime.today())
+
+
+def weekday():
+    return {1: "måndag", 2: "tisdag", 3: "onsdag", 4: "torsdag", 5: "fredag"}
 
 
 def main():
@@ -12,33 +21,8 @@ def main():
         "https://storavarvsgatan6.se/meny.html",
     ]
 
-    # spill_soup = BS(requests.get(urls[0]).content, "html.parser")
-    # spill_main = spill_soup.find_all("p", text=True)
-    # spill_veg = spill_soup.find("span", text=True)
-
-    # spill = [text.text for text in spill_main[:3]]
-    # spill.insert(2, spill_veg.text)
-
-    # print(spill)
-
-    # mec_soup = BS(requests.get(urls[1]).content, "lxml")
-    mec_soup = BS(requests.get(urls[1]).text, "lxml")
-    # mec_main = mec_soup.find_all("span", text=True)
-
-    # # Cleanup wonderfully broken html (linebreaks and characters).
-    # for linebreak in mec_soup.find_all("br"):
-    #     linebreak.extract()
-
-    # # Gather the mec-menu
-    # mec_menu = [
-    #     t.text.strip()
-    #     for t in mec_soup.find_all("span", text=True)[11:43]
-    #     if t.text.strip()
-    # ]
-    # # mec = [t.text for t in mec_main if "\xa0" not in t]
-    print(mec_menu)
-
-    # # text = [x.get_text() for x in tag]
+    print(spill(get_parser(urls[0])))
+    print(stora_varvsg(get_parser(urls[1])))
 
 
 def get_parser(url: str) -> BS:
@@ -56,6 +40,37 @@ def get_parser(url: str) -> BS:
         raise IOError(f"Bad HTTP response code {page_req.status_code}")
 
     return BS(page_req.text, "lxml")
+
+
+def spill(soup: BS):
+    # spill_soup = BS(requests.get(urls[0]).content, "html.parser")
+    spill_meat = soup.find_all("p", text=True)
+    spill_veg = soup.find("span", text=True)
+
+    spill = [text.text for text in spill_meat[:3]]
+    spill.insert(2, spill_veg.text)
+    return spill
+
+
+def stora_varvsg(soup: BS):
+    # mec_soup = BS(requests.get(urls[1]).content, "lxml")
+    # mec_soup = BS(requests.get(urls[1]).text, "lxml")
+    # mec_main = soup.find_all("span", text=True)
+
+    # Cleanup wonderfully broken html (linebreaks and characters).
+    for linebreak in soup.find_all("br"):
+        linebreak.extract()
+
+    # Gather the mec-menu
+    mec = [
+        t.text.strip()
+        for t in soup.find_all("span", text=True)[11:43]
+        if t.text.strip()
+    ]
+    return mec
+
+    # mec = [t.text for t in mec_main if "\xa0" not in t]
+    # # text = [x.get_text() for x in tag]
 
 
 if __name__ == "__main__":
